@@ -2,22 +2,7 @@ library(shiny)
 library(ggplot2)
 library(grid) 
 
-# Declare colors
-power_fill_color      = "#00ff33"
-power_text_color      = power_fill_color
-H0_fill_color         = "#0000ff"
-beta_fill_color       = "#003300"
-alpha_fill_color      = "#00ffff"
-HA_color              = "#00ff33"
-H0_line_color         = "#0d6374"
-background_color      = "#f9f0ea"
-background_color      = "#ffffcc"
-arrow_colors          = "#7D7F7F"
-
-legend_labels <- list("Null Dist.  ", 
-                      expression(paste(alpha,"=","Prob. of type I error  ")),
-                      expression(paste(beta,"=","Prob. of type II error  ")),
-                      expression(Power~"="~1~"-"~beta))
+source("./helper.R")
 
 # Define server logic required to generate and plot a random distribution
 shinyServer(function(input, output) {
@@ -31,12 +16,13 @@ shinyServer(function(input, output) {
     sd1 <- input$sd1
     sd2 <- input$sd2
     alpha  <- input$alpha
+
     # don't forget to divide alpha by 2 and to add the mean of the null distribution 
     # when calculating z_crit
     z_crit <- -(qnorm(input$alpha/2., mean=m1, sd=sd1))+m1 
     Show_Arrows <- input$show_arrows
     
-    # Do the math and so fourth
+    ## Do the math and so fourth
     
     # set length of tails
     min1 <- m1-sd1*6
@@ -151,7 +137,7 @@ shinyServer(function(input, output) {
       # H_a title
       annotate("text", label="H[A]", x=m2, y=max(y2)*1.1, fontface="italic",
                family="Times", parse=T, size=8) +
-      ggtitle("Statistical-Power Interactive Calculator\n") +
+      #ggtitle("Interactive Statistical-Power Calculator\n") +
       # remove some elements
       theme(panel.grid.minor = element_blank(),
             panel.grid.major = element_blank(),
@@ -210,10 +196,5 @@ shinyServer(function(input, output) {
       makePlot()
       dev.off()
     }
-  )
-  foo <- reactive({      
-    makePlot()
-    png(file="./www/foo2.png", width=1200, height=800, units="px")
-    dev.off()})
-  
+  )  
 })
